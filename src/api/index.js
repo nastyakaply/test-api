@@ -2,7 +2,8 @@ const express = require('express'); //импортнули модуль для �
 const fs = require('fs').promises; //импортнули модуль для работы с файловой системой с промис оберткой(асинхронная работа)
 const path = require('path'); //для создания файла
 const cors = require('cors'); //импортнули модуль для безопасного обмена данными
-
+// const http = require('http'); // для WebSocket
+// const WebSocket = require('ws');
 
 //init app с портом 3000
 const app = express();
@@ -20,12 +21,9 @@ app.get('/', (req, res) => {
         endpoints: [
             'GET  / - эта Главная страница ',
             'GET  /api/users - список всех пользователей',
-            'POST /api/register - регистрация нового пользователя'
-        ],
-        instructions: {
-            register: 'Отправьте POST запрос на /api/register с JSON телом: { name: ..., email: ..., password: ...}',
-            getUsers: 'Отправьте GET запрос на /api/users'
-        }
+            'POST /api/register - регистрация нового пользователя',
+            // 'WS   ws://localhost:3001 - WebSocket соединение'
+        ]
     });
 });
 
@@ -82,6 +80,12 @@ app.post('/api/register', async (req, res) => {
         users.push(newUser); // добавим его в массив юзеров
         // запишем в файл
         await fs.writeFile(USER_FILE, JSON.stringify(users, null, 2));
+
+        // // ОТПРАВЛЯЕМ УВЕДОМЛЕНИЕ ЧЕРЕЗ WEBSOCKET
+        // broadcastToAll({
+        //     type: 'user_registered',
+        //     user: { id: newUser.id, name: newUser.name, email: newUser.email }
+        // });
         
         res.status(201).json({
             success: true,
@@ -106,6 +110,14 @@ app.get('/api/users', async (req, res) => {
         const data = await fs.readFile(USER_FILE, 'utf8'); // считываем данные файлы
         const users = JSON.parse(data); // преобразуем их в формат js
 
+        if (!users || (Array.isArray(users) && users.length === 0)) {
+            return res.status(404).json({
+                success: false,
+                message: 'Данные пользователей не найдены'
+            });
+
+        };
+
         const usersWithoutPassword = users.map(user => ({ //получим данные пользователей (без пароля)
             id: user.id,
             name: user.name,
@@ -120,6 +132,97 @@ app.get('/api/users', async (req, res) => {
         });
     }
 });
+
+// // ========== WebSocket часть (НОВОЕ) ==========
+
+// // Создаем HTTP сервер из Express app
+// const server = http.createServer(app);
+
+// // Создаем WebSocket сервер на другом порту (3001)
+// const wss = new WebSocket.Server({ port: 3001 });
+
+// // Храним всех подключенных клиентов
+// const clients = new Set();
+
+// // Функция для отправки сообщения всем клиентам
+// function broadcastToAll(message) {
+//     const messageStr = JSON.stringify(message);
+//     clients.forEach(client => {
+//         if (client.readyState === WebSocket.OPEN) {
+//             client.send(messageStr);
+//         }
+//     });
+// }
+
+// // Обработка WebSocket подключений
+// wss.on('connection', (ws) => {
+//     console.log('Новый WebSocket клиент подключился');
+    
+//     // Добавляем клиента в список
+//     clients.add(ws);
+    
+//     // Отправляем приветственное сообщение
+//     ws.send(JSON.stringify({
+//         type: 'welcome',
+//         message: 'Добро пожаловать в WebSocket!',
+//         timestamp: new Date().toISOString(),
+//         onlineUsers: clients.size
+//     }));
+    
+//     // Обработка сообщений от клиента
+//     ws.on('message', (message) => {
+//         try {
+//             const data = JSON.parse(message);
+//             console.log('Получено WebSocket сообщение:', data);
+            
+//             // Пример: чат
+//             if (data.type === 'chat') {
+//                 broadcastToAll({
+//                     type: 'chat_message',
+//                     from: data.from || 'Аноним',
+//                     text: data.text,
+//                     timestamp: new Date().toISOString()
+//                 });
+//             }
+            
+//             // Пример: уведомление о действии
+//             if (data.type === 'action') {
+//                 broadcastToAll({
+//                     type: 'user_action',
+//                     action: data.action,
+//                     user: data.user,
+//                     timestamp: new Date().toISOString()
+//                 });
+//             }
+            
+//         } catch (error) {
+//             console.error('Ошибка обработки WebSocket сообщения:', error);
+//         }
+//     });
+    
+//     // Обработка отключения клиента
+//     ws.on('close', () => {
+//         console.log('WebSocket клиент отключился');
+//         clients.delete(ws);
+        
+//         // Уведомляем остальных
+//         broadcastToAll({
+//             type: 'user_left',
+//             onlineUsers: clients.size,
+//             timestamp: new Date().toISOString()
+//         });
+//     });
+// });
+
+// // Запуск сервера
+// server.listen(PORT, async () => {
+//     await initUsersFile();
+//     console.log('='.repeat(50));
+//     console.log('Сервер запущен!');
+//     console.log(`REST API: http://localhost:${PORT}`);
+//     console.log(`WebSocket: ws://localhost:3001`);
+//     console.log('='.repeat(50));
+// });
 
 app.listen(PORT, async () => { //запуск сервера в ожидании запросов
     await initUsersFile();
