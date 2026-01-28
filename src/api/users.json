@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "id": 1769613441336,
+    "name": "Nastya",
+    "email": "nastya@gmail.com",
+    "password": "user2001",
+    "createdAt": "2026-01-28T15:17:21.336Z"
+  },
+  {
+    "id": 1769613600971,
+    "name": "Саша",
+    "email": "alexKot@mail.ru",
+    "password": "yser1999",
+    "createdAt": "2026-01-28T15:20:00.971Z"
+  },
+  {
+    "id": 1769613732594,
+    "name": "Анастасия",
+    "email": "nastyaSHlem@yandex.ru",
+    "password": "user2004",
+    "createdAt": "2026-01-28T15:22:12.594Z"
+  },
+  {
+    "id": 1769613758598,
+    "name": "dad",
+    "email": "aa@ff.e",
+    "password": "aaaaaaad",
+    "createdAt": "2026-01-28T15:22:38.598Z"
+  }
+]

@@ -37,29 +37,32 @@ async function initUsersFile() { //функция async/await
 }
 
 //регаем нового пользователя
-app.post('/api/register', async (req, res) => {
+app.post('/api/register', async(req, res) => {
+    console.log('=== НАЧАЛО ОБРАБОТКИ /api/register ===');
+    console.log('Метод:', req.method);
+    console.log('Заголовок:', req.headers['content-type']);
+    console.log('Тело:', req.body);
+    console.log('====================================');
     try {
-        const {name, email, password} = req.body; // заносим данные в словарь с ключами из тела запроса от пользователя
+        const { name, email, password } = req.body; // заносим данные в словарь с ключами из тела запроса от пользователя
 
         if (!name || !email || !password) { // если хотя бы одно поле пустое
-            return res.status(400).json({   // получаем ошибку 400 
-                success: false,             // состояние
+            return res.status(400).json({ // получаем ошибку 400 
+                success: false, // состояние
                 message: 'Все поля обязательны' // сообщение
             });
         };
 
         if (password.length < 6) {
-            return res.status(400).json(
-                {
-                    success: false,
-                    message: 'Пароль должен быть не менее 6 символов'
-                }
-            );
+            return res.status(400).json({
+                success: false,
+                message: 'Пароль должен быть не менее 6 символов'
+            });
         };
 
         const data = await fs.readFile(USER_FILE, 'utf8'); //читаем юзеров
         const users = JSON.parse(data) //преобразуем юзеров из JSON в объектjs
-        
+
         // проверим на совпадение почты
         if (users.some(user => user.email === email)) { //проверяем есть ли в массиве юзеров почта
             return res.status(400).json({
@@ -86,14 +89,15 @@ app.post('/api/register', async (req, res) => {
         //     type: 'user_registered',
         //     user: { id: newUser.id, name: newUser.name, email: newUser.email }
         // });
-        
+
         res.status(201).json({
             success: true,
-            message: 'Регистрация успешна',
+            message: 'Регистрация успешна!',
             user: {
-                id: newUser.id, 
-                name: newUser.name, 
-                email: newUser.email}
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email
+            }
         });
     } catch (error) {
         console.error('Ошибка регистрации:', error);
@@ -105,7 +109,10 @@ app.post('/api/register', async (req, res) => {
 });
 
 //получим всех пользователей
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', async(req, res) => {
+    console.log('=== НАЧАЛО ОБРАБОТКИ /api/users ===');
+    console.log('Метод:', req.method);
+    console.log('====================================');
     try {
         const data = await fs.readFile(USER_FILE, 'utf8'); // считываем данные файлы
         const users = JSON.parse(data); // преобразуем их в формат js
@@ -157,10 +164,10 @@ app.get('/api/users', async (req, res) => {
 // // Обработка WebSocket подключений
 // wss.on('connection', (ws) => {
 //     console.log('Новый WebSocket клиент подключился');
-    
+
 //     // Добавляем клиента в список
 //     clients.add(ws);
-    
+
 //     // Отправляем приветственное сообщение
 //     ws.send(JSON.stringify({
 //         type: 'welcome',
@@ -168,13 +175,13 @@ app.get('/api/users', async (req, res) => {
 //         timestamp: new Date().toISOString(),
 //         onlineUsers: clients.size
 //     }));
-    
+
 //     // Обработка сообщений от клиента
 //     ws.on('message', (message) => {
 //         try {
 //             const data = JSON.parse(message);
 //             console.log('Получено WebSocket сообщение:', data);
-            
+
 //             // Пример: чат
 //             if (data.type === 'chat') {
 //                 broadcastToAll({
@@ -184,7 +191,7 @@ app.get('/api/users', async (req, res) => {
 //                     timestamp: new Date().toISOString()
 //                 });
 //             }
-            
+
 //             // Пример: уведомление о действии
 //             if (data.type === 'action') {
 //                 broadcastToAll({
@@ -194,17 +201,17 @@ app.get('/api/users', async (req, res) => {
 //                     timestamp: new Date().toISOString()
 //                 });
 //             }
-            
+
 //         } catch (error) {
 //             console.error('Ошибка обработки WebSocket сообщения:', error);
 //         }
 //     });
-    
+
 //     // Обработка отключения клиента
 //     ws.on('close', () => {
 //         console.log('WebSocket клиент отключился');
 //         clients.delete(ws);
-        
+
 //         // Уведомляем остальных
 //         broadcastToAll({
 //             type: 'user_left',
@@ -224,12 +231,7 @@ app.get('/api/users', async (req, res) => {
 //     console.log('='.repeat(50));
 // });
 
-app.listen(PORT, async () => { //запуск сервера в ожидании запросов
+app.listen(PORT, async() => { //запуск сервера в ожидании запросов
     await initUsersFile();
     console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
-
-
-
-
-
