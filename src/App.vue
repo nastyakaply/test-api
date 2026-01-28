@@ -1,30 +1,35 @@
 <template>
-  <nav>
-    <router-link to="/">Типа ГлаВнаЯ</router-link> |
-    <router-link to="/registration">ЗарегаЙся, БРО</router-link>
-  </nav>
-  <router-view/>
+  <div class="app-header">
+    <header class="header-home">
+      РЕГистРАШКА.VUE
+    </header>
+    <nav class="nav-home">
+      <router-link class="nav-link" to="/">Типа ГлаВнаЯ</router-link>
+      <router-link class="nav-link" to="/registration">ЗарегаЙся, БРО</router-link>
+    </nav>
+  </div>
+
+  <main>
+    <router-view/>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+        <div class="footer-links">
+          <a href="http://localhost:3000" target="_blank" class="footer-link">
+            API: localhost:3000
+          </a>
+          <span class="footer-separator">•</span>
+          <a href="http://localhost:8080" class="footer-link">
+            Frontend: localhost:8080
+          </a>
+        </div>
+        <p class="footer-copyright">
+          © 2026 Vue Registration App | 
+          <span class="fun-text">Без JS никак ^_^</span>
+        </p>
+      </div>
+  </footer>
+  
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
