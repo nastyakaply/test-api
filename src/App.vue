@@ -5,7 +5,7 @@
     </header>
     <nav class="nav-home">
       <router-link class="nav-link" to="/">Типа ГлаВнаЯ</router-link>
-      <router-link class="nav-link" to="/registration">ЗарегаЙся, БРО</router-link>
+      <router-link class="nav-link" to="/register">ЗарегаЙся, БРО</router-link>
     </nav>
   </div>
 
