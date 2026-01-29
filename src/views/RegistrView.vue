@@ -6,7 +6,7 @@
     <form @submit.prevent="registerUser">
       <div class="input-group">
         <label>Имя:</label>
-        <input v-model="name" type="text" required>
+        <input v-model="name" type="text">
       </div>
       
       <div class="input-group">
