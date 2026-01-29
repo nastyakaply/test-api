@@ -1,9 +1,9 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api/reg';
 
 export default {
     //РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ
     async register(userData) {
-        const response = await fetch(`${API_URL}/register`, {
+        const response = await fetch(`${API_URL}/rererererer`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

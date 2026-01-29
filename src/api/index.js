@@ -1,21 +1,11 @@
-const express = require('express'); //импортнули модуль для создания API
-const fs = require('fs').promises; //импортнули модуль для работы с файловой системой с промис оберткой(асинхронная работа)
-const path = require('path'); //для создания файла
-const cors = require('cors'); //импортнули модуль для безопасного обмена данными
-// const http = require('http'); // для WebSocket
-// const WebSocket = require('ws');
+const express = require("express");
+const fs = require("fs").promises;
+const path = require("path");
+const USER_FILE = path.join(__dirname, 'users.json');
 
-//init app с портом 3000
-const app = express();
-const PORT = 3000;
-// файл для хранения пользователей
-const USER_FILE = path.join(__dirname, 'users.json'); //строим путь (абсолютный) к файлу users.json
+const router = express.Router();
 
-app.use(cors()); //подключаем модули к приложухе
-app.use(express.json());
-
-// Главная страница - та что появится при загрузке сервера npm start из  ...\api-test-app\src\api
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
     res.status(200).json({
         message: 'Сервер регистрации работает!',
         endpoints: [
@@ -36,8 +26,9 @@ async function initUsersFile() { //функция async/await
     }
 }
 
+
 //регаем нового пользователя
-app.post('/api/register', async(req, res) => {
+router.post('/rererererer', async(req, res) => {
     console.log('=== НАЧАЛО ОБРАБОТКИ /api/register ===');
     console.log('Метод:', req.method);
     console.log('Заголовок:', req.headers['content-type']);
@@ -84,12 +75,6 @@ app.post('/api/register', async(req, res) => {
         // запишем в файл
         await fs.writeFile(USER_FILE, JSON.stringify(users, null, 2));
 
-        // // ОТПРАВЛЯЕМ УВЕДОМЛЕНИЕ ЧЕРЕЗ WEBSOCKET
-        // broadcastToAll({
-        //     type: 'user_registered',
-        //     user: { id: newUser.id, name: newUser.name, email: newUser.email }
-        // });
-
         res.status(201).json({
             success: true,
             message: 'Регистрация успешна!',
@@ -109,7 +94,7 @@ app.post('/api/register', async(req, res) => {
 });
 
 //получим всех пользователей
-app.get('/api/users', async(req, res) => {
+router.get('/users', async(req, res) => {
     console.log('=== НАЧАЛО ОБРАБОТКИ /api/users ===');
     console.log('Метод:', req.method);
     console.log('====================================');
@@ -140,98 +125,5 @@ app.get('/api/users', async(req, res) => {
     }
 });
 
-// // ========== WebSocket часть (НОВОЕ) ==========
 
-// // Создаем HTTP сервер из Express app
-// const server = http.createServer(app);
-
-// // Создаем WebSocket сервер на другом порту (3001)
-// const wss = new WebSocket.Server({ port: 3001 });
-
-// // Храним всех подключенных клиентов
-// const clients = new Set();
-
-// // Функция для отправки сообщения всем клиентам
-// function broadcastToAll(message) {
-//     const messageStr = JSON.stringify(message);
-//     clients.forEach(client => {
-//         if (client.readyState === WebSocket.OPEN) {
-//             client.send(messageStr);
-//         }
-//     });
-// }
-
-// // Обработка WebSocket подключений
-// wss.on('connection', (ws) => {
-//     console.log('Новый WebSocket клиент подключился');
-
-//     // Добавляем клиента в список
-//     clients.add(ws);
-
-//     // Отправляем приветственное сообщение
-//     ws.send(JSON.stringify({
-//         type: 'welcome',
-//         message: 'Добро пожаловать в WebSocket!',
-//         timestamp: new Date().toISOString(),
-//         onlineUsers: clients.size
-//     }));
-
-//     // Обработка сообщений от клиента
-//     ws.on('message', (message) => {
-//         try {
-//             const data = JSON.parse(message);
-//             console.log('Получено WebSocket сообщение:', data);
-
-//             // Пример: чат
-//             if (data.type === 'chat') {
-//                 broadcastToAll({
-//                     type: 'chat_message',
-//                     from: data.from || 'Аноним',
-//                     text: data.text,
-//                     timestamp: new Date().toISOString()
-//                 });
-//             }
-
-//             // Пример: уведомление о действии
-//             if (data.type === 'action') {
-//                 broadcastToAll({
-//                     type: 'user_action',
-//                     action: data.action,
-//                     user: data.user,
-//                     timestamp: new Date().toISOString()
-//                 });
-//             }
-
-//         } catch (error) {
-//             console.error('Ошибка обработки WebSocket сообщения:', error);
-//         }
-//     });
-
-//     // Обработка отключения клиента
-//     ws.on('close', () => {
-//         console.log('WebSocket клиент отключился');
-//         clients.delete(ws);
-
-//         // Уведомляем остальных
-//         broadcastToAll({
-//             type: 'user_left',
-//             onlineUsers: clients.size,
-//             timestamp: new Date().toISOString()
-//         });
-//     });
-// });
-
-// // Запуск сервера
-// server.listen(PORT, async () => {
-//     await initUsersFile();
-//     console.log('='.repeat(50));
-//     console.log('Сервер запущен!');
-//     console.log(`REST API: http://localhost:${PORT}`);
-//     console.log(`WebSocket: ws://localhost:3001`);
-//     console.log('='.repeat(50));
-// });
-
-app.listen(PORT, async() => { //запуск сервера в ожидании запросов
-    await initUsersFile();
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
-});
+module.exports = router;
