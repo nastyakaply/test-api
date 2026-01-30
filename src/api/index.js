@@ -26,6 +26,8 @@ async function initUsersFile() { //функция async/await
     }
 }
 
+// Инициализируем файл при импорте модуля
+initUsersFile().catch(console.error);
 
 //регаем нового пользователя
 router.post('/rererererer', async(req, res) => {
@@ -41,25 +43,25 @@ router.post('/rererererer', async(req, res) => {
             return res.status(400).json({ // получаем ошибку 400 
                 success: false, // состояние
                 message: 'Все поля обязательны' // сообщение
-            });
+            })
         };
 
         if (password.length < 6) {
             return res.status(400).json({
                 success: false,
                 message: 'Пароль должен быть не менее 6 символов'
-            });
+            })
         };
 
         const data = await fs.readFile(USER_FILE, 'utf8'); //читаем юзеров
-        const users = JSON.parse(data) //преобразуем юзеров из JSON в объектjs
+        const users = JSON.parse(data); //преобразуем юзеров из JSON в объектjs
 
         // проверим на совпадение почты
         if (users.some(user => user.email === email)) { //проверяем есть ли в массиве юзеров почта
             return res.status(400).json({
                 success: false,
                 message: 'Пользователь с таким email уже существует'
-            });
+            })
         };
 
         // создадим нового юзера (объект с полями: id, name, email, password, createdAt)
@@ -106,7 +108,7 @@ router.get('/users', async(req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Данные пользователей не найдены'
-            });
+            })
 
         };
 
